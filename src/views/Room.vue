@@ -1,7 +1,11 @@
 <template>
     <div class="bord-cards">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-8 mt-4">
+                <section class="info-room mt-2 p-2">
+                    <h4>Sprint Novembro</h4>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat reiciendis aliquam minima recusandae consectetur</p>
+                </section>
                 <div class="row wrapper-cards">
                     <div v-for="card in cards" class="cards-poker">
                         <div class="inner-cards">
@@ -12,7 +16,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-2">
+            <div class="col-md-4 mt-4">
                 <div class="card list-users border-0 shadow">
                     <header>
                         <span>Jogadores</span>
@@ -26,7 +30,8 @@
                                 <span class="info">
                                     <small :class="'bullter status-'+Math.round(Math.random() * (2 - 1 ) +1)"></small>
                                     <span class="name">Brad Gibson</span>
-                                    <time>00:00:00</time>
+                                    <time>00:00:00</time> 
+                                    <small class="check-vote"><i class="fas fa-check"></i></small>
                                 </span>
                             </span>
                         </li>
@@ -139,6 +144,12 @@ export default{
                 }
                 >.name{
                     display:block;
+                }
+                >.check-vote{
+                    padding:3px;
+                    display:inline-flex;
+                    color:var(--primary);
+                    border-radius:50%
                 }
             }
         }
