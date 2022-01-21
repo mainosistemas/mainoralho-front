@@ -4,7 +4,8 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
-
+const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
+const Project = ()=>import('../views/Project')
 Vue.use(VueRouter)
 
 
@@ -34,6 +35,11 @@ const routes = [
         path:'/room/:id',
         name:'room',
         component:Room
+      },
+      {
+        path:'/project/:id',
+        name:'project',
+        component:Project
       }
     ]
   },
@@ -41,6 +47,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register
   }
 ]
 

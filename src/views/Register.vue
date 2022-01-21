@@ -5,64 +5,82 @@
         <span>maino</span>
         <span>ralho</span>
       </header>
+
       <div v-if="msg" class="alert" :class="msg.class">
         <span v-html="msg.text"></span>
       </div>
-      <form class="form" @onsubmit="Logar">
+      <form class="form" @onsubmit="Salvar" autocomplete="off">
         <div class="form-group">
-          <input type="text" v-model="user.email" class="form-control" placeholder="Email" required>
+          <input type="email" v-model="user.email" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.email}" placeholder="Email" autocomplete="false" required>
         </div>
         <div class="form-group">
-          <input type="password" v-model="user.password" class="form-control" placeholder="Senha" required>
+          <input type="text" v-model="user.name" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.name}" placeholder="Nome" autocomplete="false" required>
+        </div>
+        <div class="form-group">
+          <input type="password" v-model="user.password" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.password}" placeholder="Senha" autocomplete="false" required>
         </div>
         <div class="btn-login">
-          <button type="buttom" @click.prevent="Logar" class="btn btn-block btn-mainor" >
+          <button type="buttom" @click.prevent="Salvar" class="btn btn-block btn-mainor" >
             <div v-if="loading" class="spinner-border text-light spinner-border-sm" role="status">
               <span class="sr-only">Loading...</span>
             </div>
-            <template v-else>login</template>
+            <template v-else>Registrar</template>
           </button>
         </div>
       </form>
       <footer>
-        <p>Voce não tem conta?
-          <router-link :to="{name:'register'}">crie uma conta</router-link>
+        <p class="text-center">
+          <router-link :to="{name:'login'}">Voltar para o Login</router-link>
         </p>
       </footer>
     </div>
   </div>
 </template>
 <script>
-
 export default {
-  name: "login",
+  name: "register",
   data(){
     return{
       user:{
         email:null,
-        password:null
+        password:null,
+        name:null
       },
       loading:false,
       msg:null
     }
   },
   methods:{
-    async Logar(){
+    async Salvar(){
+
+      if(!this.user.email || !this.user.password || !this.user.name){
+        this.msg ={
+          text:'Preencha os campos corretamente',
+          class:'alert-danger'
+        }
+        return false;
+      }
+
       this.loading = true
-      this.msg=null
+      let registration=this.user
+
       try {
-        let response = await this.$api().post('auth_user',this.user)
-        let json = response.data
-        window.localStorage.setItem('~token', JSON.stringify(json.data.user))
-        this.$router.push({path:'/'})
+        let response = await this.$api().post('registrations',{registration})
+
+        this.msg ={
+          text:'Operação realizada com sucesso',
+          class:'alert-success'
+        }
+
       } catch (error) {
+
         let err_data = error.response?.data?.data || null
         let text = err_data?.errors ? err_data.errors.join('<br />') :'Ocorreu uma erro ao realizar com operação'
-        this.msg={
+
+        this.msg ={
           text,
           class:'alert-danger'
         }
-
       }
       this.loading = false
     }

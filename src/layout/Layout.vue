@@ -6,10 +6,10 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a class="navbar-brand logo" href="#">
+                <router-link :to="{name:'home'}" class="navbar-brand logo" >
                     <span>maino</span>
                     <span>ralho</span>
-                </a>
+                </router-link>
                 <ul class="navbar-nav ml-md-auto">
                     <li class="nav-item active">
                         <a class="nav-link" href="#">User <span class="sr-only">(current)</span></a>
@@ -59,7 +59,7 @@ export default{
         }
         &:nth-child(2){
             color:$maino_green;
-            font-weight:100
+            font-weight:300
         }
         }
     }

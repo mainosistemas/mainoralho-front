@@ -2,8 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
+import './plugins'
 import store from './store'
-
+import FlashMessage from '@/components/FlashMessage'
 /**
  * Importa o bootstrap
  */
@@ -11,7 +12,7 @@ import store from './store'
 import 'bootstrap/scss/bootstrap.scss'
 
 import './assets/sass/layout.scss'
-
+Vue.component('flash-message',FlashMessage)
 Vue.config.productionTip = false
 
 new Vue({
