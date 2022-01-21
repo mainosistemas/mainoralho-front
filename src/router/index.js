@@ -5,7 +5,7 @@ import Login from '../views/Login.vue'
 const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
 const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
-const Project = ()=>import('../views/Project')
+const Project = ()=>import(/*webpackName:"project" */ '../views/Project')
 Vue.use(VueRouter)
 
 
