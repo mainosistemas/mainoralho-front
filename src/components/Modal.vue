@@ -3,21 +3,6 @@
       <div class="modal-dialog">
         <div class="modal-content">
             <slot name="content"></slot>
-            <!--<div class="modal-header">
-                <div class="text-center" style="width:100%">
-                    <h5 class="modal-title ">Criar nova sala</h5>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="">Nome da sala</label>
-                    <input type="text" class="form-control" v-model="room_name">
-                </div>
-                <div class="action-modal d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary" @click="CloseModal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" @click="Salvar">Salvar</button>
-                </div>
-            </div>-->
         </div>
       </div>
   </div>
@@ -56,9 +41,9 @@ export default {
                 /**
                  * Evento para qnd o modal fechar
                  */
-                this.$refs["modalref"].addEventListener('hidden.bs.modal', ()=>{
-                    console.log("aaa")
-                }, false);
+                $(this.$refs["modalref"]).on('hidden.bs.modal', ()=>{
+                    this.$emit('complete-close', true)
+                });
             }
         },
         CloseModal(){
@@ -69,16 +54,15 @@ export default {
         }
     },
     watch:{
-        isOpen(){
-            let bodyel= document.querySelector('body')
-            if(this.isOpen && !bodyel.classList.contains('modal-open')){
-                this.OpenModal();
-            }
-            if(!this.isOpen && bodyel.classList.contains('modal-open')){
-                this.CloseModal();
-            }
-            console.log(this.isOpen)
+      isOpen(){
+        let bodyel= document.querySelector('body')
+        if(this.isOpen && !bodyel.classList.contains('modal-open')){
+            this.OpenModal();
         }
+        if(!this.isOpen && bodyel.classList.contains('modal-open')){
+            this.CloseModal();
+        }
+      }
     },
     mounted(){
 

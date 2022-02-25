@@ -16,7 +16,7 @@
         </ul>
       </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container-fluid mb-5">
         <!--na route mane home, render dashboard-->
         <dashboard v-if="$route.name==='home'" />
         <!--/-->
@@ -24,11 +24,13 @@
         <router-view v-else></router-view>
         <!--/-->
     </div>
+    <footer-mr/>
   </div>
 </template>
 <script>
 
 import Dashboard from '../components/Dashboard'
+import FooterMr from './Footer.vue'
 
 export default{
     name:"Layout",
@@ -36,7 +38,8 @@ export default{
 
     }),
     components:{
-        Dashboard
+        Dashboard,
+        FooterMr
     },
     methods:{
     },

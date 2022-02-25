@@ -12,9 +12,8 @@
         </nav>
       </div>
       <div class="col-md-8 mt-4">
-        <section v-if="room" class="info-room mt-2 p-2">
-          <h4 v-html="room.name"></h4>
-          <p v-html="room.title.rendered"></p>
+        <section class="info-room mb-2 ">
+          <p class="mb-0 text-center">{{task.name}}</p>
         </section>
         <div class="row wrapper-cards">
           <div v-for="(card, i) in cards" class="cards-poker" :key="i">
@@ -25,6 +24,7 @@
             </div>
           </div>
         </div>
+        <task-mr v-on:play="Play" />
       </div>
       <div class="col-md-4 mt-4">
         <div class="card list-users border-0 shadow">
@@ -52,15 +52,16 @@
           </ul>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 <script>
 import Avatar from "../components/Avatar.vue";
 
-import ActionCable from "actioncable";
-const cable = ActionCable.createConsumer("ws://localhost:9000/cable");
-
+//import ActionCable from "actioncable";
+import TaskMr from '../components/Task.vue';
+//const cable = ActionCable.createConsumer("ws://localhost:9000/cable");
 
 export default {
   name: "Room",
@@ -74,11 +75,20 @@ export default {
         rendered: null,
       },
     },
+    task:{}
   }),
   components: {
     Avatar,
+    TaskMr,
   },
   methods: {
+    Play({task, state}){
+      if(state){
+        this.task=task
+      } else {
+        this.task = {}
+      }
+    },
     async getSprint(){
       let {id} = this.$route.params
 
@@ -93,7 +103,7 @@ export default {
 
 
     async getUser() {
-      const res = await fetch("https://reqres.in/api/users/");
+      const res = await fetch("https://reqres.in/api/users/?per_page=13");
       const json = await res.json();
 
       if (json) {
@@ -127,23 +137,23 @@ export default {
   created() {
     this.getSprint();
     this.getUser();
-    console.log(cable)
-    cable.subscriptions.create({
-      channel:'ChatChannel',
-      room:4
-    },{
-      connected: function() {
-        console.log("connected to rails actioncable Yay!");
-        cable.send("speak", JSON.stringify({nome:'asdas'}))
-      },
-      disconnected: function() {
-        console.log("disconnected");
-      },
-      received: (data) => {
-        console.log("Mesange", data)
-        //this.messages.push(data)
-      }
-    });
+    // console.log(cable)
+    // cable.subscriptions.create({
+    //   channel:'ChatChannel',
+    //   room:4
+    // },{
+    //   connected: function() {
+    //     console.log("connected to rails actioncable Yay!");
+    //     cable.send("speak", JSON.stringify({nome:'asdas'}))
+    //   },
+    //   disconnected: function() {
+    //     console.log("disconnected");
+    //   },
+    //   received: (data) => {
+    //     console.log("Mesange", data)
+    //     //this.messages.push(data)
+    //   }
+    // });
   },
 };
 </script>
@@ -201,6 +211,10 @@ export default {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
     text-transform: uppercase;
+  }
+  >ul{
+    overflow: auto;
+    max-height: 600px;
   }
   .content-user-sidebar {
     margin-top: 15px;
