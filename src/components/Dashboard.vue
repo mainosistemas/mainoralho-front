@@ -84,7 +84,7 @@
 </template>
 <script>
 import Modal from "./Modal.vue";
-import FlashMessage from './FlashMessage.vue';
+
 export default {
   name: "Dashboard",
   data: () => ({
@@ -92,11 +92,11 @@ export default {
     open_modal: false,
     loding: false,
     project_name: null,
-    msg:null
+    msg:null,
+    saving:false
   }),
   components: {
-    Modal,
-    FlashMessage,
+    Modal
   },
   methods: {
     async getRooms() {
@@ -123,10 +123,10 @@ export default {
         const {project} = res.data.data
 
         res.data.data.project.data = new Date(res.data.data.project.created_at).toLocaleString();
-        console.log(res);
+
         this.room_list=[...[res.data.data.project], ...this.room_list]
         if (project) {
-          this.$router.push({'name':'sprint', params:{id: project.id}})
+          this.$router.push({'name':'project', params:{id: project.id}})
         }
       } catch (error) {
         this.msg={
@@ -139,6 +139,7 @@ export default {
   },
   created() {
     this.getRooms();
+
   },
 };
 </script>
