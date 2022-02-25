@@ -2,7 +2,7 @@
   <footer class="footer-background mt-5 pt-3">
     <div class="footer-border d-flex justify-content-around pl-3">
       <section class="footer-section">
-        <img class="logo" src="../assets/logo_maino_branco.png" alt="Logo da empresa maino">
+        <img class="footer-logo" src="../assets/logo_maino_branco.png" alt="Logo da empresa maino">
         <div class="pt-3 d-flex align-items-center">
           <p>Mainoralho é um projeto criado para o planejamento das sprints, tendo baseado na tecnica de planejamento planning poker</p>
         </div>
@@ -69,7 +69,7 @@ export default {
     padding-bottom: 2rem;
   }
 
-  .logo {
+  .footer-logo {
     height: 80px;
     width: auto;
   }
