@@ -24,12 +24,16 @@
             <!--nas demais rotas filhas-->
             <router-view v-else></router-view>
             <!--/-->
-        </div>    
+        </div>   
+
+        <footer-mr/>
+ 
     </div>
 </template>
 <script>
 
 import Dashboard from '../components/Dashboard'
+import FooterMr from './FooterMr'
 
 export default{
     name:"Layout",
@@ -37,7 +41,8 @@ export default{
         
     }),
     components:{
-        Dashboard
+        Dashboard,
+        FooterMr
     },
     methods:{
     },

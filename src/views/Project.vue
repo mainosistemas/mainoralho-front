@@ -102,9 +102,7 @@ export default {
     async salvar() {
       this.saving = true;
       let {id:project_id} = this.$route.params
-      console.log("começou")
       if(project_id) {
-        console.log("if foi")
         try{
           let res = await this.$api().post("sprints", {sprint: { name: this.sprint_name, project_id}});
           this.msg = {
