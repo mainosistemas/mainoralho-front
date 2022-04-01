@@ -25,6 +25,9 @@
         </div>
       </form>
       <footer>
+        <div class="text-center mb-4 mt-0">
+          <router-link class="forgot-password" :to="{name:'forgotPassword'}">esqueceu sua senha?</router-link>
+        </div>
         <p>Voce não tem conta?
           <router-link :to="{name:'register'}">crie uma conta</router-link>
         </p>
@@ -106,6 +109,10 @@ export default {
         padding: 15px 0 0;
         p{
           font-size: 14px;
+        }
+        .forgot-password{
+          color: #999999;
+          font-size: 0.9rem;
         }
       }
       .btn-mainor{
