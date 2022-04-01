@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Login from '../views/Login.vue'
+const ForgotPassword = () =>import(/*webpackName: "forgot-password" */ '../views/ForgotPassword')
 const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
 const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
@@ -52,6 +53,11 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgotPassword',
+    component: ForgotPassword
   }
 ]
 
