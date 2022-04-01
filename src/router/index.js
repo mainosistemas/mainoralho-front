@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Login from '../views/Login.vue'
-const ForgotPassword = () =>import(/*webpackName: "forgot-password" */ '../views/ForgotPassword')
+const ForgotPassword = ()=>import(/*webpackName: "forgot-password" */ '../views/ForgotPassword')
+const ResetPassword = ()=>import(/*webpackName: "reset-password"*/ '../views/ResetPassword')
 const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
 const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
@@ -58,6 +59,11 @@ const routes = [
     path: '/forgot-password',
     name: 'forgotPassword',
     component: ForgotPassword
+  },
+  {
+    path: '/reset-password',
+    name: 'resetPassword',
+    component: ResetPassword
   }
 ]
 
