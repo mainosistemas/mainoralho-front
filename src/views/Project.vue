@@ -14,23 +14,25 @@
       <section class="list-rooms mt-4">
         <div class="card">
           <div class="card-body">
-
-            <table class="table">
+            <p v-if="!loading && sprint_list.length<1" class="mb-0">
+              Nenhuma sprint cadastrada para esse projeto
+            </p>
+            <table v-if="sprint_list.length>0" class="table table-hover">
               <thead>
                 <tr>
                   <th class="border-0">Nome</th>
-                  <th class="border-0">Id do Criador</th>
+                  <th class="border-0">Votos</th>
+                  <th class="border-0 text-right">Data</th>
                 </tr>
               </thead>
-
               <tbody>
-                <tr v-for="sprint in sprint_list" :key="sprint.id">
+                <tr class="row-sprints" v-for="sprint in sprint_list" :key="sprint.id" @click="goTo(sprint)">
                   <td>{{sprint.name}}</td>
-                  <td>{{sprint.owner_id}}</td>
+                  <td>13 Votos</td>
+                  <td class="text-right">{{sprint.data}}</td>
                 </tr>
               </tbody>
             </table>
-
           </div>
         </div>
       </section>
@@ -81,6 +83,7 @@ export default {
     open_modal: false,
     sprint_name: null,
     sprint_list: [],
+    loading:false,
     msg: null
 	}),
 
@@ -89,37 +92,47 @@ export default {
 	},
 
   methods: {
+    goTo(item){
+      this.$router.push({name:'room', params:{id:item.id}})
+    },
     async lista_sprints(){
+      let {id:project_id} = this.$route.params
+      this.loading = true
       try {
-        let res = await this.$api().get("sprints");
+        let res = await this.$api().get("sprints", {params:{project_id}});
+        res.data.map((item) => {
+          item.data = new Date(item.created_at).toLocaleString();
+        });
         this.sprint_list = res.data;
-        console.log(res)
       } catch (error) {
-        console.log(error);
       }
+      this.loading = false
     },
 
     async salvar() {
       this.saving = true;
       let {id:project_id} = this.$route.params
-      console.log("começou")
+
       if(project_id) {
-        console.log("if foi")
+
         try{
           let res = await this.$api().post("sprints", {sprint: { name: this.sprint_name, project_id}});
           this.msg = {
             text: "Sprint cadastrada com sucesso!",
             class: "alert-success",
           }
+          this.sprint_list = [...[res.data?.data?.sprint], ...this.sprint_list]
+          setTimeout(()=>{
+            this.open_modal=false
+          }, 1000)
         } catch(error) {
-          
+
           this.msg = {
             text: this.$erros(error),
             class: "alert-danger",
           }
         }
       }
-      console.log("fechou")
 
       this.saving = false;
     }
@@ -131,6 +144,14 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+  .row-sprints{
+    td{
+      cursor: pointer;
+    }
+  }
+</style>
 
 
 

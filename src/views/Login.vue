@@ -2,7 +2,7 @@
   <div class="login">
     <div class="box-form shadow">
       <header>
-        <span>maino</span>
+        <span>mainô</span>
         <span>ralho</span>
       </header>
       <div v-if="msg" class="alert" :class="msg.class">

@@ -52,7 +52,10 @@
         </div>
       </section>
     </div>
-    <Modal :isOpen.sync="open_modal" v-on:close="open_modal = false">
+    <Modal
+      :isOpen.sync="open_modal"
+      v-on:close="open_modal = false"
+      v-on:complete-close="complete_close=true">
       <template slot="content">
         <div class="modal-header">
           <div class="text-center" style="width: 100%">
@@ -84,7 +87,7 @@
 </template>
 <script>
 import Modal from "./Modal.vue";
-import FlashMessage from './FlashMessage.vue';
+
 export default {
   name: "Dashboard",
   data: () => ({
@@ -92,11 +95,12 @@ export default {
     open_modal: false,
     loding: false,
     project_name: null,
-    msg:null
+    msg:null,
+    complete_close:false,
+    saving:false
   }),
   components: {
-    Modal,
-    FlashMessage,
+    Modal
   },
   methods: {
     async getRooms() {
@@ -115,19 +119,21 @@ export default {
       this.saving = true;
       try {
         let res = await this.$api().post("projects", {project: { name: this.project_name }});
-        this. msg={
+        this.msg={
           text: "Projeto cadastrado com sucesso!",
           class:'alert-success'
         }
 
         const {project} = res.data.data
-
         res.data.data.project.data = new Date(res.data.data.project.created_at).toLocaleString();
-        console.log(res);
+        this.open_modal = false
+
         this.room_list=[...[res.data.data.project], ...this.room_list]
-        if (project) {
-          this.$router.push({'name':'sprint', params:{id: project.id}})
-        }
+        this.$nextTick(()=>{
+          if (project && !this.open_modal) {
+            this.$router.push({'name':'project', params:{id: project.id}})
+          }
+        })
       } catch (error) {
         this.msg={
           text: this.$erros(error, 'Erro ao cadastrar projeto'),
@@ -139,6 +145,8 @@ export default {
   },
   created() {
     this.getRooms();
+
   },
+
 };
 </script>

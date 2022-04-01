@@ -8,6 +8,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "actioncable": "^5.2.6",
     "axios": "^0.25.0",
     "bootstrap": "^4.6.1",
     "core-js": "^3.6.5",

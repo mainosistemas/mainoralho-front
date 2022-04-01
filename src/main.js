@@ -8,9 +8,9 @@ import FlashMessage from '@/components/FlashMessage'
 /**
  * Importa o bootstrap
  */
-
+import jquery from 'jquery'
 import 'bootstrap/scss/bootstrap.scss'
-
+window.$ = jquery
 import './assets/sass/layout.scss'
 Vue.component('flash-message',FlashMessage)
 Vue.config.productionTip = false
