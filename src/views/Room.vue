@@ -62,7 +62,8 @@ import Avatar from "../components/Avatar.vue";
 //import ActionCable from "actioncable";
 import TaskMr from '../components/Task.vue';
 //const cable = ActionCable.createConsumer("ws://localhost:9000/cable");
-
+import socket from 'socket.io/client-dist/socket.io.js'
+const connect = socket.io('localhost:5000')
 export default {
   name: "Room",
   data: () => ({
@@ -155,6 +156,14 @@ export default {
     //   }
     // });
   },
+  mounted(){
+
+    // console.log(connect)
+
+    connect.emit('room', (e)=>{
+
+    })
+  }
 };
 </script>
 

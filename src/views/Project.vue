@@ -26,10 +26,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="row-sprints" v-for="sprint in sprint_list" :key="sprint.id" @click="goTo(sprint)">
+                <tr class="row-sprints" v-for="sprint in sprint_list" :key="sprint.project_id" @click="goTo(sprint)">
                   <td>{{sprint.name}}</td>
                   <td>13 Votos</td>
-                  <td class="text-right">{{sprint.data}}</td>
+                  <td class="text-right"></td>
                 </tr>
               </tbody>
             </table>
@@ -96,10 +96,10 @@ export default {
       this.$router.push({name:'room', params:{id:item.id}})
     },
     async lista_sprints(){
-      let {id:project_id} = this.$route.params
+      let {id:project} = this.$route.params
       this.loading = true
       try {
-        let res = await this.$api().get("sprints", {params:{project_id}});
+        let res = await this.$api().get("sprints", {params:{project}});
         res.data.map((item) => {
           item.data = new Date(item.created_at).toLocaleString();
         });
@@ -121,7 +121,8 @@ export default {
             text: "Sprint cadastrada com sucesso!",
             class: "alert-success",
           }
-          this.sprint_list = [...[res.data?.data?.sprint], ...this.sprint_list]
+          this.lista_sprints()
+          //this.sprint_list = [...[res.data?.data?.sprint], ...this.sprint_list]
           setTimeout(()=>{
             this.open_modal=false
           }, 1000)
