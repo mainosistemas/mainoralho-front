@@ -16,11 +16,11 @@
           <p class="mb-0 text-center">{{task.name}}</p>
         </section>
         <div class="row wrapper-cards">
-          <div v-for="(card, i) in cards" class="cards-poker" :key="i">
+          <div v-for="(card, i) in cards" class="cards-poker" :key="i" @click="EmitVote(card.key)">
             <div class="inner-cards">
-              <header v-html="card"></header>
-              <main v-html="card"></main>
-              <footer v-html="card"></footer>
+              <header v-html="card.label"></header>
+              <main v-html="card.label"></main>
+              <footer v-html="card.label"></footer>
             </div>
           </div>
         </div>
@@ -58,16 +58,22 @@
 </template>
 <script>
 import Avatar from "../components/Avatar.vue";
-
-//import ActionCable from "actioncable";
 import TaskMr from '../components/Task.vue';
-//const cable = ActionCable.createConsumer("ws://localhost:9000/cable");
-import socket from 'socket.io/client-dist/socket.io.js'
-const connect = socket.io('localhost:5000')
+
+//const socket = new WebSocket('ws://localhost:9000/cable');
+
 export default {
   name: "Room",
   data: () => ({
-    cards: [1, 2, 3, 5, 8, 13, "?", '<i class="fas fa-coffee"></i>'],
+    cards: [
+      {"key":1, "label": '1'},
+      {"key":2, "label": '2'},
+      {"key":3, "label": '3'},
+      {"key":5, "label": '5'},
+      {"key":8, "label": '8'},
+      {"key":4, "label": '?'},
+      {"key":6, "label": '<i class="fas fa-coffee"></i>'}
+    ],
     users: [],
     sprint:null,
     room: {
@@ -83,6 +89,23 @@ export default {
     TaskMr,
   },
   methods: {
+    EmitVote(vote){
+      let {id} = this.$route.params
+
+
+      const msg = {
+        command:'message',
+        identifier: JSON.stringify({channel: 'ChatChannel'}),
+        data:{
+          type: "message",
+          text: "Alisson",
+          id:   id,
+          date: Date.now()
+        }
+      };
+      socket.send(JSON.stringify(msg));
+    },
+
     Play({task, state}){
       if(state){
         this.task=task
@@ -96,6 +119,7 @@ export default {
       if(id){
         try {
           let res = await this.$api().get(`sprints/${id}`)
+          this.room = res.data
         } catch (err) {
 
         }
@@ -119,50 +143,70 @@ export default {
         });
       }
       this.users = json?.data || [];
-    },
-    async getTasks() {
-      let { id } = this.$route.params;
-
-      if (id) {
-        let res = await fetch(
-          "https://techcrunch.com/wp-json/wp/v2/posts/" + id
-        );
-        let response = await res.json();
-        this.room = response;
-        if (response) {
-          this.room.name = response.title.rendered.substr(0, 14);
-        }
-      }
-    },
+    }
   },
   created() {
     this.getSprint();
     this.getUser();
-    // console.log(cable)
-    // cable.subscriptions.create({
-    //   channel:'ChatChannel',
-    //   room:4
-    // },{
-    //   connected: function() {
-    //     console.log("connected to rails actioncable Yay!");
-    //     cable.send("speak", JSON.stringify({nome:'asdas'}))
-    //   },
-    //   disconnected: function() {
-    //     console.log("disconnected");
-    //   },
-    //   received: (data) => {
-    //     console.log("Mesange", data)
-    //     //this.messages.push(data)
-    //   }
-    // });
   },
   mounted(){
 
-    // console.log(connect)
 
-    connect.emit('room', (e)=>{
+    let {id} = this.$route.params
 
-    })
+    // console.log(socket)
+
+    // socket.onopen = function(event) {
+    //   console.log('WebSocket is connected.', event);
+    //   const msg = {
+    //     command: 'subscribe',
+    //     identifier: JSON.stringify({
+    //       room:id,
+    //       channel: 'ChatChannel',
+    //       usuario: "Fulado"
+    //     }),
+    //   };
+    //   socket.send(JSON.stringify(msg));
+    // };
+    // socket.onclose = function(event) {
+    //   console.log('WebSocket is closed.');
+    // };
+
+    // socket.onmessage = function(event) {
+    //   const response = event.data;
+    //   const msg = JSON.parse(response);
+
+
+
+    //   // Ignores pings.
+    //   if (msg.type === "ping") {
+    //       return;
+    //   }
+    //   console.log("FROM RAILS: ", msg);
+
+    //   if (msg.type === "confirm_subscription") {
+    //     const msg = {
+    //       command: 'message',
+    //       identifier: JSON.stringify({channel: 'ChatChannel'}),
+    //       data: JSON.stringify(
+    //         {
+    //           user_id: 1,
+    //           message: 'Hello world!'
+    //         }
+    //       )
+    //     }
+    //     console.log("Subb")
+    //     socket.send(JSON.stringify(msg));
+    //   }
+
+    // };
+
+    // // When an error occurs through the websocket connection, this code is run printing the error message.
+    // socket.onerror = function(error) {
+    //     console.log('WebSocket Error: ' + error);
+    // };
+
+
   }
 };
 </script>

@@ -26,7 +26,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="row-sprints" v-for="sprint in sprint_list" :key="sprint.project_id" @click="goTo(sprint)">
+                <tr class="row-sprints" v-for="sprint in sprint_list" :key="sprint.id" @click="goTo(sprint)">
                   <td>{{sprint.name}}</td>
                   <td>13 Votos</td>
                   <td class="text-right"></td>

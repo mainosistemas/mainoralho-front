@@ -6,6 +6,7 @@ const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
 const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
 const Project = ()=>import(/*webpackName:"project" */ '../views/Project')
+const Chat = ()=>import(/*webpackName:"project" */ '../views/Chat')
 Vue.use(VueRouter)
 
 
@@ -52,6 +53,11 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register
+  },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: Chat
   }
 ]
 
