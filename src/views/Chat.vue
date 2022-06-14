@@ -1,75 +1,46 @@
 <template>
   <div>
-  <h3>Teste</h3>
-  <button type="button" @click="Send">Enviar</button>
+    <h3>Teste</h3>
+    <button type="button" @click="Send">Enviar</button>
   </div>
 
 </template>
 
 <script>
-const socket = new WebSocket('ws://localhost:9000/cable');
+import webSocketService from '../services/webSocketService'
+const socket = new webSocketService();
 export default {
 
 
   methods:{
     Send(){
 
-      let params= new URLSearchParams({
-        data_message: JSON.stringify({
-          type:'vote',
-          name: 'Alisson',
-          id: 2,
-        })
+      let data_message = JSON.stringify({
+        command:"mensage",
+        data:JSON.stringify({message:'Alisson', action:'speak'}),
+        identifier: JSON.stringify({
+          room:23,
+          channel: 'VoteChannel',
+        }),
       })
 
-      fetch('http://localhost:9000/chat?'+params)
+
     }
   },
 
 
   mounted(){
+    let id = 23
+    socket.initSocket({
+      room:id,
+      channel: 'VoteChannel'
+    });
 
-    let id= 23
-
-    console.log(socket)
-
-    socket.onopen = function(event) {
-      console.log('WebSocket is connected.', event);
-      const msg = {
-        command: 'subscribe',
-        identifier: JSON.stringify({
-          room:id,
-          channel: 'ChatChannel',
-          usuario: "Fulado"
-        }),
-      };
-      socket.send(JSON.stringify(msg));
-    };
-    socket.onclose = function(event) {
-      console.log('WebSocket is closed.');
-    };
 
     socket.onmessage = function(event) {
-      const response = event.data;
-      const msg = JSON.parse(response);
-
-
-
-      // Ignores pings.
-      if (msg.type === "ping") {
-          return;
-      }
-
-      console.log("FROM RAILS: ", msg, response);
-
-
-
+      console.log(event)
     };
 
-    // When an error occurs through the websocket connection, this code is run printing the error message.
-    socket.onerror = function(error) {
-        console.log('WebSocket Error: ' + error);
-    };
   }
 }
 </script>

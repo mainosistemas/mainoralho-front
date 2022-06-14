@@ -1,11 +1,11 @@
 
 module.exports={
-  chainWebpack: config=>{
-    config
-    .plugin('html')
-    .tap(args=>{
-        args[0].title="Mainôralho"
-        return args;
-    })
-  }
+  // chainWebpack: config=>{
+  //   config
+  //   .plugin('html')
+  //   .tap(args=>{
+  //       args[0].title="Mainôralho"
+  //       return args;
+  //   })
+  // }
 }

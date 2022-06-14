@@ -58,6 +58,10 @@ const routes = [
     path: '/chat',
     name: 'chat',
     component: Chat
+  },
+  {
+    path: '/make-component',
+    component: ()=>import('../Programa.vue')
   }
 ]
 
