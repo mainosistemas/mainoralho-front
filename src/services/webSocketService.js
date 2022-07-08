@@ -28,8 +28,8 @@ export default class webSocketService {
         return;
       }
       console.log(msg)
-      let event = new Event("hello", {bubbles: true}); // (2)
-      elem.dispatchEvent(event);
+      let _event = new Event("hello", {bubbles: true}); // (2)
+      elem.dispatchEvent(_event);
       this.onmessage = msg
 
     };
