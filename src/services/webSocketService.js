@@ -28,8 +28,9 @@ export default class webSocketService {
         return;
       }
       console.log(msg)
-      let _event = new Event("hello", {bubbles: true}); // (2)
-      elem.dispatchEvent(_event);
+      let elem = new Event("hello", {bubbles: true}); // (2)
+      console.log(elem)
+      elem.dispatchEvent(event);
       this.onmessage = msg
 
     };
@@ -52,3 +53,32 @@ export default class webSocketService {
   }
 
 }
+
+// const socket = new WebSocket("ws://localhost:3000/cable")
+//         const containerMessage = document.getElementById("messages")
+//         socket.onopen = function(event) {
+//             console.log("websocket está conectado")
+//             socket.send(JSON.stringify({
+//                 command: "subscribe",
+//                 identifier: JSON.stringify({"channel":"ChatChannel", "room": "sprint02"})
+//             }))
+//             //setTimeout(sendMsg, 1000)
+//         }
+
+//         function sendMsg() {
+//             socket.send(JSON.stringify({
+//                 command: "message",
+//                 data: JSON.stringify({message:"msg php", action:"votar"}),
+//                 identifier: JSON.stringify({"channel":"ChatChannel", "room": "sprint02"})
+//             }))
+//         }
+
+//         socket.onmessage = function(event) {
+//             const resposta = event.data
+//             const data = JSON.parse(resposta)
+//             console.log(data)
+//             if (data.message && data.message.type == "vote") {
+//                 console.log(data)
+//                 containerMessage.append(data.message.message)
+//             }
+//         }

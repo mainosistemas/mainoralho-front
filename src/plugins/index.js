@@ -10,6 +10,10 @@ const Commons={
       let text = err_data?.errors ? err_data.errors.join('<br />') :msg
       return text
     }
+
+    Vue.prototype.$formatData=()=>{
+
+    }
   }
 }
 

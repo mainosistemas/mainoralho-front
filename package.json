@@ -10,6 +10,7 @@
     "build:cp": "vue-cli-service build --target wc --name programa-12cif './src/Programa.vue' "
   },
   "dependencies": {
+    "actioncable-vue": "^2.5.1",
     "axios": "^0.25.0",
     "bootstrap": "^4.6.1",
     "core-js": "^3.6.5",

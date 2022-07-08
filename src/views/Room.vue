@@ -16,7 +16,7 @@
           <p class="mb-0 text-center">{{task.name}}</p>
         </section>
         <div class="row wrapper-cards">
-          <div v-for="(card, i) in cards" class="cards-poker" :key="i" @click="EmitVote(card.key)">
+          <div v-for="(card, i) in cards" class="cards-poker" :key="i" @click=" Object.keys(task).length>0 ? EmitVote(card.key): '' ">
             <div class="inner-cards">
               <header v-html="card.label"></header>
               <main v-html="card.label"></main>
@@ -90,28 +90,27 @@ export default {
   },
   methods: {
     EmitVote(vote){
-      let {id} = this.$route.params
-
-
-      const msg = {
-        command:'message',
-        identifier: JSON.stringify({channel: 'ChatChannel'}),
-        data:{
-          type: "message",
-          text: "Alisson",
-          id:   id,
-          date: Date.now()
+      this.$api().post('tasks/'+this.task.id+'/user_votes', {
+        "vote": {
+          "score": vote,
+          "voted_moment_time":new Date().toJSON()
         }
-      };
-      socket.send(JSON.stringify(msg));
+      })
     },
 
     Play({task, state}){
-      if(state){
-        this.task=task
-      } else {
-        this.task = {}
-      }
+      let attr = state ? 'start_votation_time': 'finish_votation_time';
+
+      this.$api().put('tasks/'+task.id, {
+          [attr]:new Date().toJSON()
+        }
+      ).then(res=>{
+        if(state){
+          this.task=task
+        } else {
+          this.task = {}
+        }
+      })
     },
     async getSprint(){
       let {id} = this.$route.params

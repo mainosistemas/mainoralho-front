@@ -5,7 +5,8 @@ import { User } from './datauser'
 export const api = () => {
 
   return axios.create({
-    baseURL: "https://mainoralho.herokuapp.com/",
+    //baseURL: "https://mainoralho.herokuapp.com/",
+    baseURL: "http://localhost:3000/",
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",

@@ -3,7 +3,7 @@
     <header>
       <span>Tarefas</span>
       <span class="action-task">
-        <a href="#" @click.prevent="modal_open=true">Nova <i class="fas fa-pencil-alt"></i></a>
+        <a href="#" @click.prevent="modal_open=true">Nova <i class="fas fa-plus"></i></a>
       </span>
     </header>
     <section class="list-tasks">
@@ -19,6 +19,7 @@
               <i class="fas" :class="is_play !=0 && is_play==task.id ? 'fa-stop':'fa-play-circle' "></i>
               </button>
             <button :disabled="is_play !=0"> <i class="fas fa-trash-alt"></i></button>
+            <button :disabled="is_play !=0" @click.prevent="EditTask(task)"> <i class="fas fa-pencil-alt"></i></button>
           </span>
         </li>
         <li v-if="tasks.length<1" class="list-group-item cursor-pointer" @click="modal_open=true">
@@ -30,7 +31,7 @@
     <modal
       :isOpen.sync="modal_open"
       v-on:close="modal_open=false"
-      v-on:complete-close="task_name=null"
+      v-on:complete-close="onCloseModal"
       >
       <template slot="content">
         <div class="modal-header">
@@ -40,8 +41,12 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label for="">Descrição</label>
+            <label for="">Nome</label>
             <input type="text" class="form-control" v-model="task_name" />
+          </div>
+          <div class="form-group">
+            <label for="">Descrição</label>
+             <textarea v-model="descrition" class="form-control"></textarea>
           </div>
           <div class="action-modal d-flex justify-content-between">
             <button
@@ -52,7 +57,7 @@
               Cancelar
             </button>
             <button type="button" class="btn btn-primary" @click="Salvar">
-              Salvar
+              {{this.saving ? 'Enviando...': 'Salvar'}}
             </button>
           </div>
         </div>
@@ -73,6 +78,9 @@ export default {
       tasks:[],
       is_play:0,
       cron:null,
+      descrition:null,
+      id:null,
+      saving:false,
       time:{
         millisecond:0,
         second:0,
@@ -86,6 +94,11 @@ export default {
     TimeMr
   },
   methods:{
+    onCloseModal(){
+      this.task_name=null
+      this.descrition=null
+      this.id = null
+    },
 
     PlayTime(state){
 
@@ -136,25 +149,40 @@ export default {
 
     },
 
+    EditTask(data){
+      this.descrition = data.description
+      this.task_name = data.name
+      this.id=data.id
+      this.modal_open = true;
+    },
+
     Salvar(){
-      let task={name: this.task_name, sprint_id: this.$route.params.id}
-      if(this.tasks.length<1){
-        task.id = 1
-        this.tasks = [task]
-      } else {
-        task.id = this.tasks[this.tasks.length-1].id + 1
-        this.tasks = [...[task], ...this.tasks]
+
+      let params = {
+        "task": {
+          "name": this.task_name,
+          "description": this.descrition,
+          "sprint_id": this.$route.params.id
+        }
       }
-      localStorage.setItem('tasks', JSON.stringify(this.tasks))
-      this.modal_open=false
+      this.saving = true
+      let request = this.id ? this.$api().put('tasks/'+this.id, params) : this.$api().post('tasks/', params)
+      request.then(res=>{
+        //this.tasks = [...[res.data], ...this.tasks]
+        this.getTasks()
+      }).finally(res=>{
+        this.modal_open=false
+        this.saving = false
+      })
     },
     getTasks(){
-      let tasks = localStorage.getItem('tasks')
-      try {
-        this.tasks = JSON.parse(tasks).filter(t=>t.sprint_id==this.$route.params.id)
-      } catch (error) {
+      this.tasks = [];
+      this.$api().get(`/sprints/${this.$route.params.id}/tasks/`).then(res=>{
+        this.tasks = res.data
+      }).finally(res=>{
+        console.log("Aaa")
+      })
 
-      }
     }
   },
   mounted(){

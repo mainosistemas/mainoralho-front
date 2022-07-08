@@ -30,21 +30,21 @@ export default {
 
     methods:{
         OpenModal(){
-            if(this.$refs["modalref"]){
-                instanceModal = new Modal(this.$refs["modalref"], {
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                instanceModal.show()
-                // instanceModal._backdrop = 'static'
+          if(this.$refs["modalref"]){
+            instanceModal = new Modal(this.$refs["modalref"], {
+              backdrop: 'static',
+              keyboard: false
+            });
+            instanceModal.show()
+            // instanceModal._backdrop = 'static'
 
-                /**
-                 * Evento para qnd o modal fechar
-                 */
-                $(this.$refs["modalref"]).on('hidden.bs.modal', ()=>{
-                    this.$emit('complete-close', true)
-                });
-            }
+            /**
+             * Evento para qnd o modal fechar
+             */
+            $(this.$refs["modalref"]).on('hidden.bs.modal', ()=>{
+              this.$emit('complete-close', true)
+            });
+          }
         },
         CloseModal(){
             if(this.$refs["modalref"] && instanceModal){
