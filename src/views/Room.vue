@@ -59,11 +59,11 @@
 <script>
 import Avatar from "../components/Avatar.vue";
 import TaskMr from '../components/Task.vue';
-
-//const socket = new WebSocket('ws://localhost:9000/cable');
+import ChannelMixin from './ChannelMixin'
 
 export default {
   name: "Room",
+  mixins:[ChannelMixin],
   data: () => ({
     cards: [
       {"key":1, "label": '1'},
@@ -74,7 +74,6 @@ export default {
       {"key":4, "label": '?'},
       {"key":6, "label": '<i class="fas fa-coffee"></i>'}
     ],
-    users: [],
     sprint:null,
     room: {
       name: null,
@@ -95,21 +94,40 @@ export default {
           "score": vote,
           "voted_moment_time":new Date().toJSON()
         }
+      }).then(res=>{
+
+        this.$cable.perform({
+          channel: "VoteChannel",
+          action: "votar",
+          data: {
+            user_id: res.data.owner_id,
+          },
+        });
       })
     },
 
     Play({task, state}){
       let attr = state ? 'start_votation_time': 'finish_votation_time';
-
+      let {id} = this.$route.params
       this.$api().put('tasks/'+task.id, {
-          [attr]:new Date().toJSON()
+          [attr]:new Date().toJSON(),
+          status_votation:state ? 'started': 'finished'
         }
       ).then(res=>{
+        let action = null
         if(state){
           this.task=task
+          action = 'iniciar_votacao'
         } else {
           this.task = {}
+          action = 'encerrar_votacao'
         }
+        this.$cable.perform({
+          channel: "VoteChannel",
+          action: action,
+          room:id,
+          data:{task_id: task.id},
+        });
       })
     },
     async getSprint(){
@@ -124,88 +142,9 @@ export default {
         }
       }
     },
-
-
-    async getUser() {
-      const res = await fetch("https://reqres.in/api/users/?per_page=13");
-      const json = await res.json();
-
-      if (json) {
-        json?.data.map((item, i) => {
-          item.avatar =
-            i == Math.round(Math.random() * (json?.data.length - 1) + 1)
-              ? null
-              : item.avatar;
-          item.online = Math.round(Math.random() * (2 - 1) + 1);
-          item.vote = Math.round(Math.random() * (2 - 1) + 1);
-          item.name = item.first_name + " " + item.last_name;
-        });
-      }
-      this.users = json?.data || [];
-    }
   },
   created() {
     this.getSprint();
-    this.getUser();
-  },
-  mounted(){
-
-
-    let {id} = this.$route.params
-
-    // console.log(socket)
-
-    // socket.onopen = function(event) {
-    //   console.log('WebSocket is connected.', event);
-    //   const msg = {
-    //     command: 'subscribe',
-    //     identifier: JSON.stringify({
-    //       room:id,
-    //       channel: 'ChatChannel',
-    //       usuario: "Fulado"
-    //     }),
-    //   };
-    //   socket.send(JSON.stringify(msg));
-    // };
-    // socket.onclose = function(event) {
-    //   console.log('WebSocket is closed.');
-    // };
-
-    // socket.onmessage = function(event) {
-    //   const response = event.data;
-    //   const msg = JSON.parse(response);
-
-
-
-    //   // Ignores pings.
-    //   if (msg.type === "ping") {
-    //       return;
-    //   }
-    //   console.log("FROM RAILS: ", msg);
-
-    //   if (msg.type === "confirm_subscription") {
-    //     const msg = {
-    //       command: 'message',
-    //       identifier: JSON.stringify({channel: 'ChatChannel'}),
-    //       data: JSON.stringify(
-    //         {
-    //           user_id: 1,
-    //           message: 'Hello world!'
-    //         }
-    //       )
-    //     }
-    //     console.log("Subb")
-    //     socket.send(JSON.stringify(msg));
-    //   }
-
-    // };
-
-    // // When an error occurs through the websocket connection, this code is run printing the error message.
-    // socket.onerror = function(error) {
-    //     console.log('WebSocket Error: ' + error);
-    // };
-
-
   }
 };
 </script>

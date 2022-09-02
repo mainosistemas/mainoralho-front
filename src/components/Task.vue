@@ -179,6 +179,12 @@ export default {
       this.tasks = [];
       this.$api().get(`/sprints/${this.$route.params.id}/tasks/`).then(res=>{
         this.tasks = res.data
+
+        let getTaskStarted= res.data.find(t=> t.status_votation=== 'started')
+        // if(getTaskStarted){
+        //   this.ActionPlay(getTaskStarted, getTaskStarted.id)
+        // }
+
       }).finally(res=>{
         console.log("Aaa")
       })
