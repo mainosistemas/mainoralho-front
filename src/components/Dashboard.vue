@@ -103,11 +103,11 @@ export default {
     Modal
   },
   methods: {
-    async getRooms() {
+    async getProjects() {
       this.loading = true;
-      let res = await this.$api().get("projects");
-      let json = await res.data
-      if (json) {
+      let res = await this.$api().post("projects/listar");
+      let json = res.data
+      if (res.data) {
         json.map((item) => {
           item.data = new Date(item.created_at).toLocaleString();
         });
@@ -124,11 +124,11 @@ export default {
           class:'alert-success'
         }
 
-        const {project} = res.data.data
-        res.data.data.project.data = new Date(res.data.data.project.created_at).toLocaleString();
+        const {data:project} = res.data
+        res.data.data = new Date(res.data.created_at).toLocaleString();
         this.open_modal = false
 
-        this.room_list=[...[res.data.data.project], ...this.room_list]
+        this.room_list=[...[res.data], ...this.room_list]
         this.$nextTick(()=>{
           if (project && !this.open_modal) {
             this.$router.push({'name':'project', params:{id: project.id}})
@@ -144,9 +144,7 @@ export default {
     },
   },
   created() {
-    this.getRooms();
-
-  },
-
+    this.getProjects();
+  }
 };
 </script>

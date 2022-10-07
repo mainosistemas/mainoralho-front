@@ -11,7 +11,7 @@
         </router-link>
         <ul class="navbar-nav ml-md-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">User <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="#" @click.prevent="Logout">Sair <span class="sr-only">(current)</span></a>
           </li>
         </ul>
       </div>
@@ -42,6 +42,10 @@ export default{
         FooterMr
     },
     methods:{
+      Logout(){
+        window.localStorage.removeItem('~token');
+        window.location.reload()
+      }
     },
     created(){
     }

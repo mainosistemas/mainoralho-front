@@ -17,8 +17,8 @@
               :disabled="is_play !=0 && is_play != task.id"
               >
               <i class="fas" :class="is_play !=0 && is_play==task.id ? 'fa-stop':'fa-play-circle' "></i>
-              </button>
-            <button :disabled="is_play !=0"> <i class="fas fa-trash-alt"></i></button>
+            </button>
+            <button :disabled="is_play !=0" @click="Delete(task)"> <i class="fas fa-trash-alt"></i></button>
             <button :disabled="is_play !=0" @click.prevent="EditTask(task)"> <i class="fas fa-pencil-alt"></i></button>
           </span>
         </li>
@@ -94,6 +94,22 @@ export default {
     TimeMr
   },
   methods:{
+
+    async Delete(task){
+      if(confirm("Deseja realmente apagar a tarefas?")){
+        try {
+          await this.$api().post('tasks/destroy', {id:task.id})
+
+          this.$nextTick(()=>{
+            this.tasks = this.tasks.filter(t=>t.id !==task.id)
+          })
+
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    },
+
     onCloseModal(){
       this.task_name=null
       this.descrition=null
@@ -136,13 +152,21 @@ export default {
       clearInterval(this.cron)
     },
 
-    ActionPlay(task, state){
+    ActionPlay(task, state, emitPlay=true){
+
+
+      if(state !=0){
+        this.$api().get('tasks/'+task.id).then(res=>{
+          this.$emit('user-votes', res.data.ja_votou_usuarios)
+        })
+      }
 
       this.is_play=state
 
       this.$emit('play', {
         task,
-        state:state !=0
+        state:state !=0,
+        emitPlay
       })
 
       this.PlayTime(state)
@@ -168,7 +192,6 @@ export default {
       this.saving = true
       let request = this.id ? this.$api().put('tasks/'+this.id, params) : this.$api().post('tasks/', params)
       request.then(res=>{
-        //this.tasks = [...[res.data], ...this.tasks]
         this.getTasks()
       }).finally(res=>{
         this.modal_open=false
@@ -177,16 +200,16 @@ export default {
     },
     getTasks(){
       this.tasks = [];
-      this.$api().get(`/sprints/${this.$route.params.id}/tasks/`).then(res=>{
+      this.$api().post(`/tasks/listar`, {sprint_id:this.$route.params.id}).then(res=>{
         this.tasks = res.data
 
         let getTaskStarted= res.data.find(t=> t.status_votation=== 'started')
-        // if(getTaskStarted){
-        //   this.ActionPlay(getTaskStarted, getTaskStarted.id)
-        // }
+        if(getTaskStarted){
+          this.ActionPlay(getTaskStarted, getTaskStarted.id, false)
+        }
 
       }).finally(res=>{
-        console.log("Aaa")
+
       })
 
     }

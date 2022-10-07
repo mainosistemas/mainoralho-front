@@ -99,7 +99,7 @@ export default {
       let {id:project} = this.$route.params
       this.loading = true
       try {
-        let res = await this.$api().get("sprints", {params:{project}});
+        let res = await this.$api().post("sprints/listar", {params:{project}});
         res.data.map((item) => {
           item.data = new Date(item.created_at).toLocaleString();
         });

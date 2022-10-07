@@ -16,7 +16,7 @@
           <p class="mb-0 text-center">{{task.name}}</p>
         </section>
         <div class="row wrapper-cards">
-          <div v-for="(card, i) in cards" class="cards-poker" :key="i" @click=" Object.keys(task).length>0 ? EmitVote(card.key): '' ">
+          <div v-for="(card, i) in cards" :class="{active: userVote && userVote.score == card.score}" class="cards-poker" :key="i" @click="Object.keys(task).length>0 && !userVote ? EmitVote(card.key): '' ">
             <div class="inner-cards">
               <header v-html="card.label"></header>
               <main v-html="card.label"></main>
@@ -24,7 +24,7 @@
             </div>
           </div>
         </div>
-        <task-mr v-on:play="Play" />
+        <task-mr v-on:play="Play" ref="task_ref" v-on:user-votes="handleVotes"/>
       </div>
       <div class="col-md-4 mt-4">
         <div class="card list-users border-0 shadow">
@@ -46,10 +46,17 @@
                       }`"
                     ></i>
                   </small>
+                  <small v-if="user.score">
+                    {{user.score.label}}
+                  </small>
                 </span>
               </span>
             </li>
           </ul>
+          <div v-if="trend" class="result-pont">
+            <h2 class="text-center">Resultado</h2>
+            <h1 class="text-center">{{trend ? trend.label: ''}}</h1>
+          </div>
         </div>
       </div>
 
@@ -66,13 +73,13 @@ export default {
   mixins:[ChannelMixin],
   data: () => ({
     cards: [
-      {"key":1, "label": '1'},
-      {"key":2, "label": '2'},
-      {"key":3, "label": '3'},
-      {"key":5, "label": '5'},
-      {"key":8, "label": '8'},
-      {"key":4, "label": '?'},
-      {"key":6, "label": '<i class="fas fa-coffee"></i>'}
+      {"key":1, "label": '1', 'score':'one'},
+      {"key":2, "label": '2', 'score':'two'},
+      {"key":3, "label": '3', 'score':'three'},
+      {"key":5, "label": '5', 'score':'five'},
+      {"key":8, "label": '8', 'score':'eight'},
+      {"key":4, "label": '?', 'score':'interrogation'},
+      {"key":6, "label": '<i class="fas fa-coffee"></i>','score':'coffee'}
     ],
     sprint:null,
     room: {
@@ -81,13 +88,28 @@ export default {
         rendered: null,
       },
     },
-    task:{}
+    task:{},
+    userVote:null
   }),
   components: {
     Avatar,
     TaskMr,
   },
   methods: {
+
+    handleVotes(userVotes){
+      let users = [...this.users]
+      users.map(item=>{
+        item.vote = userVotes.some( uv => uv.user_id == item.id && uv.ja_votou) ? 1 : 0
+        item.verifica = userVotes.some( uv => uv.user_id == item.id && uv.ja_votou)
+      })
+      //console.log(userVotes, users)
+      this.$nextTick(()=>{
+        console.log(users)
+        this.users = users
+      })
+    },
+
     EmitVote(vote){
       this.$api().post('tasks/'+this.task.id+'/user_votes', {
         "vote": {
@@ -95,7 +117,7 @@ export default {
           "voted_moment_time":new Date().toJSON()
         }
       }).then(res=>{
-
+        this.userVote = res.data
         this.$cable.perform({
           channel: "VoteChannel",
           action: "votar",
@@ -106,36 +128,40 @@ export default {
       })
     },
 
-    Play({task, state}){
-      let attr = state ? 'start_votation_time': 'finish_votation_time';
-      let {id} = this.$route.params
-      this.$api().put('tasks/'+task.id, {
-          [attr]:new Date().toJSON(),
-          status_votation:state ? 'started': 'finished'
-        }
-      ).then(res=>{
-        let action = null
-        if(state){
-          this.task=task
-          action = 'iniciar_votacao'
-        } else {
-          this.task = {}
-          action = 'encerrar_votacao'
-        }
-        this.$cable.perform({
-          channel: "VoteChannel",
-          action: action,
-          room:id,
-          data:{task_id: task.id},
-        });
-      })
+    Play({task, state, emitPlay}){
+      if(!emitPlay){
+        this.task=task
+      } else {
+        let attr = state ? 'start_votation_time': 'finish_votation_time';
+        let {id} = this.$route.params
+        this.$api().put('tasks/'+task.id, {
+            [attr]:new Date().toJSON(),
+            status_votation:state ? 'started': 'finished'
+          }
+        ).then(res=>{
+          let action = null
+          if(state){
+            this.task=task
+            action = 'iniciar_votacao'
+          } else {
+            this.task = {}
+            action = 'encerrar_votacao'
+          }
+          this.$cable.perform({
+            channel: "VoteChannel",
+            action: action,
+            room:id,
+            data:{task_id: task.id},
+          });
+        })
+      }
     },
     async getSprint(){
       let {id} = this.$route.params
 
       if(id){
         try {
-          let res = await this.$api().get(`sprints/${id}`)
+          let res = await this.$api().post(`sprints/show`, {id})
           this.room = res.data
         } catch (err) {
 
@@ -156,6 +182,13 @@ export default {
   .cards-poker {
     width: 170px;
     padding: 10px;
+    &.active{
+      .inner-cards{
+        box-shadow: none;
+        background-color: #4cc3b8;
+        color:#fff
+      }
+    }
     .inner-cards {
       cursor: pointer;
       background: #fff;
