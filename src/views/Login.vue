@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-
+import { setUser } from '../services/datauser'
 export default {
   name: "login",
   data(){
@@ -56,18 +56,25 @@ export default {
       try {
         let response = await this.$api().post('auth_user',this.user)
         let json = response.data
-        window.localStorage.setItem('~token', JSON.stringify(json.data.user))
+        json.data.user
+        await setUser(json.data.user)
         this.$router.push({path:'/'})
       } catch (error) {
-        let err_data = error.response?.data?.data || null
+        console.log(error)
+        let err_data = error?.data?.data || null
         let text = err_data?.errors ? err_data.errors.join('<br />') :'Ocorreu uma erro ao realizar com operação'
         this.msg={
           text,
           class:'alert-danger'
         }
-
       }
       this.loading = false
+    }
+  },
+  mounted(){
+    if(this.$state.msg.text){
+      this.msg = {...this.$state.msg}
+      this.$state.msg = {}
     }
   }
 }

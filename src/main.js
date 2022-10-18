@@ -24,8 +24,28 @@ import './assets/sass/layout.scss'
 Vue.component('flash-message',FlashMessage)
 Vue.config.productionTip = false
 
-new Vue({
+Vue.prototype.$state = Vue.observable({
+  msg:{},
+})
+
+const _app = new Vue({
   router,
   store,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
+
+window.addEventListener('message', (ev)=>{
+  if(ev.data ==='login-expirado'){
+
+    _app.$state.msg={
+      text:"Login Expirado",
+      class:'alert-warning'
+    }
+
+    _app.$router.push({
+      name:'login',
+    })
+
+    return;
+  }
+});

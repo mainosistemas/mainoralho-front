@@ -7,9 +7,8 @@ const Layout = ()=>import(/*webpackName:"layout" */ '../layout/Layout')
 const Room = ()=>import(/*webpackName:"root" */ '../views/Room')
 const Register = ()=>import(/*webpackName:"register" */ '../views/Register')
 const Project = ()=>import(/*webpackName:"project" */ '../views/Project')
-const Chat = ()=>import(/*webpackName:"project" */ '../views/Chat')
+//const Chat = ()=>import(/*webpackName:"project" */ '../views/Chat')
 Vue.use(VueRouter)
-
 
 const Auth=(to, from, next)=>{
   let token = window.localStorage.getItem('~token');
@@ -54,17 +53,6 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register
-  },
-  {
-    path: '/chat',
-    name: 'chat',
-    component: Chat
-  },
-  {
-    path: '/make-component',
-    path: '/forgot-password',
-    name: 'forgotPassword',
-    component: ForgotPassword
   }
 ]
 
