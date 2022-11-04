@@ -93,7 +93,7 @@ export default {
   data: () => ({
     room_list: [],
     open_modal: false,
-    loding: false,
+    loading: false,
     project_name: null,
     msg:null,
     complete_close:false,
