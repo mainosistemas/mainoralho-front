@@ -11,13 +11,13 @@
       </div>
       <form class="form" @onsubmit="Salvar" autocomplete="off">
         <div class="form-group">
-          <input type="email" v-model="user.email" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.email}" placeholder="Email" autocomplete="false" required>
+          <input type="email" v-model="user.email" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.email}" placeholder="Email" autocomplete="off" required>
         </div>
         <div class="form-group">
-          <input type="text" v-model="user.name" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.name}" placeholder="Nome" autocomplete="false" required>
+          <input type="text" v-model="user.name" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.name}" placeholder="Nome" autocomplete="off" required>
         </div>
         <div class="form-group">
-          <input type="password" v-model="user.password" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.password}" placeholder="Senha" autocomplete="false" required>
+          <input type="password" v-model="user.password" v-on:focus="msg=null" class="form-control" :class="{'is-invalid':msg && msg.class=='alert-danger' && !user.password}" placeholder="Senha" autocomplete="off" required>
         </div>
         <div class="btn-login">
           <button type="buttom" @click.prevent="Salvar" class="btn btn-block btn-mainor" >
@@ -37,8 +37,10 @@
   </div>
 </template>
 <script>
+import mixinLogin from './mixinLogin'
 export default {
   name: "register",
+  mixins: [mixinLogin],
   data(){
     return{
       user:{
@@ -65,13 +67,18 @@ export default {
       let registration=this.user
 
       try {
-        let response = await this.$api().post('registrations',{registration})
+        await this.$api().post('registrations',{registration})
 
         this.msg ={
           text:'Operação realizada com sucesso',
           class:'alert-success'
         }
+        let response = await this.$api().post('auth_user',{
+          email:this.user.email,
+          password:this.user.password
+        })
 
+        await this.persisteUser(response.data.data.user)
       } catch (error) {
 
         let err_data = error.response?.data?.data || null
