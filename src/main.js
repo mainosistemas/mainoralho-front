@@ -10,7 +10,7 @@ import FlashMessage from '@/components/FlashMessage'
 Vue.use(ActionCableVue, {
   debug: true,
   debugLevel: "error",
-  connectionUrl: "ws://localhost:3000/cable", // or function which returns a string with your JWT appended to your server URL as a query parameter
+  connectionUrl: url_api+"cable", // or function which returns a string with your JWT appended to your server URL as a query parameter
   connectImmediately: true,
 });
 

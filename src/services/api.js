@@ -25,7 +25,7 @@ export const api = () => {
   const _User = User()
 
   let instance_axios = axios.create({
-    baseURL: "https://mainoralho.herokuapp.com/",
+    baseURL: url_api,
     //baseURL: "http://localhost:3000/",
     headers: {
       "Content-Type": "application/json",

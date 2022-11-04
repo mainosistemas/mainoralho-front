@@ -46,9 +46,7 @@
                       }`"
                     ></i>
                   </small>
-                  <small v-if="user.score">
-                    {{user.score.label}}
-                  </small>
+                  <small v-if="user.score" v-html="user.score.label"></small>
                 </span>
               </span>
             </li>
