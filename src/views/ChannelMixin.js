@@ -8,17 +8,9 @@ export default {
   },
   channels:{
     VoteChannel: {
-      connected(data) {
-        console.log("Conectado", data)
-      },
-      rejected() {
-        console.log("Reject")
-      },
+      connected(data) {},
+      rejected() {},
       received(data) {
-
-        if(data && data.type !=='ping'){
-          console.log(data.type)
-        }
 
         if(data && data.type =='conectado'){
           const {message:user, users} = data
@@ -101,7 +93,7 @@ export default {
     this.$cable.subscribe({
       channel:'VoteChannel',
       room:id,
-      user: { email:user?.email}
+      user: { email:user?.email }
     })
 
 

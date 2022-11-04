@@ -101,9 +101,7 @@ export default {
         item.vote = userVotes.some( uv => uv.user_id == item.id && uv.ja_votou) ? 1 : 0
         item.verifica = userVotes.some( uv => uv.user_id == item.id && uv.ja_votou)
       })
-      //console.log(userVotes, users)
       this.$nextTick(()=>{
-        console.log(users)
         this.users = users
       })
     },
