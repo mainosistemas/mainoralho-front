@@ -35,7 +35,6 @@
                 <tbody>
                   <tr v-for="(item, k) in room_list" :key="k">
                     <td>
-
                       <router-link :to="{name:'project', params:{id:item.id}}">{{ item.name }}</router-link>
                     </td>
                     <td>

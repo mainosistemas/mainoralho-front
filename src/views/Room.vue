@@ -32,21 +32,23 @@
             <span>Jogadores</span>
           </header>
           <ul class="list-unstyled">
-            <li v-for="(user, k) in users" class="lits-item" :key="k">
+            <li v-for="(player, k) in users" class="lits-item" :key="k">
               <span class="d-flex justify-content-between content-user-sidebar">
-                <avatar :image="user.avatar" :name="user.name" />
+                <div class="box-image" :class="'dropdown-'+player.id">
+                  <avatar :image="player.avatar" :name="player.name" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"/>
+                  <div v-if="$refs['task_ref'].permision_action" class="dropdown-menu">
+                    <a class="dropdown-item" href="#" @click.prevent="Tipo(player.id, 'player')">Player</a>
+                    <a class="dropdown-item" href="#" @click.prevent="Tipo(player.id, 'espectador')">Espectador</a>
+                  </div>
+                </div>
                 <span class="info">
-                  <small :class="'bullter status-' + user.online"></small>
-                  <span class="name">{{ user.name }}</span>
+                  <small :class="`bullter status-${player.tipo ? tipo[player.tipo]:'0'}`"></small>
+                  <span class="name">{{ player.name }}</span>
                   <time>00:00:00</time>
                   <small class="check-vote">
-                    <i
-                      :class="`fas fa-${
-                        user.vote == 1 ? 'check-circle' : 'times-circle'
-                      }`"
-                    ></i>
+                    <i :class="`fas fa-${ player.vote == 1 ? 'check-circle' : 'times-circle'}`"></i>
                   </small>
-                  <small v-if="user.score" v-html="user.score.label"></small>
+                  <small v-if="player.score" v-html="player.score.label"></small>
                 </span>
               </span>
             </li>
@@ -57,7 +59,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -65,7 +66,8 @@
 import Avatar from "../components/Avatar.vue";
 import TaskMr from '../components/Task.vue';
 import ChannelMixin from './ChannelMixin'
-
+import 'popper.js'
+import dropdown from 'bootstrap/js/dist/dropdown'
 export default {
   name: "Room",
   mixins:[ChannelMixin],
@@ -84,13 +86,20 @@ export default {
       name: null
     },
     task:{},
-    userVote:null
+    userVote:null,
+    tipo:{
+      'player':1,
+      'espectador':2
+    }
   }),
   components: {
     Avatar,
     TaskMr,
   },
   methods: {
+    Tipo(id, tipo){
+      console.log(id, tipo)
+    },
 
     handleVotes(userVotes){
       let users = [...this.users]
@@ -156,8 +165,7 @@ export default {
         try {
           let res = await this.$api().post(`sprints/show`, {id})
           this.room = res.data
-
-          this.task_ref.permision_action = this.user.id === res.data.owner_id
+          this.$refs['task_ref'].permision_action = this.user.id === res.data.owner_id
         } catch (err) {
 
         }
@@ -166,12 +174,16 @@ export default {
   },
   created() {
     this.getSprint();
+  },
+  mounted(){
+    $('.dropdown-toggle').dropdown()
   }
 };
 </script>
 
 <style lang="scss">
 @import "../assets/sass/variables";
+
 .wrapper-cards {
   justify-content: center;
   .cards-poker {
@@ -232,8 +244,9 @@ export default {
     text-transform: uppercase;
   }
   >ul{
-    overflow: auto;
+
     max-height: 600px;
+    min-height: 200px;
   }
   .content-user-sidebar {
     margin-top: 15px;
@@ -274,6 +287,34 @@ export default {
           }
         }
       }
+    }
+  }
+}
+.box-image{
+  width: 55px;
+  height: 55px;
+  display: inline-flex;
+  cursor: pointer;
+  position: relative;
+  >.dropdown-menu{
+    top:5px !important;
+    background: var(--azul);
+    >a{
+      color: #fff;
+      padding: 0.25rem .75rem;
+      &:hover{
+        background: rgba(0, 0, 0, 0.15)
+      }
+    }
+    &::after{
+      position: absolute;
+      content: "";
+      top:-8px;
+      left:16px;
+      border-top:0 solid var(--azul);
+      border-right:8px solid transparent;
+      border-left:8px solid transparent;
+      border-bottom:8px solid var(--azul);
     }
   }
 }
