@@ -37,8 +37,8 @@
                 <div class="box-image" :class="'dropdown-'+player.id">
                   <avatar :image="player.avatar" :name="player.name" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"/>
                   <div v-if="$refs['task_ref'].permision_action" class="dropdown-menu">
-                    <a class="dropdown-item" href="#" @click.prevent="Tipo(player.id, 'player')">Player</a>
-                    <a class="dropdown-item" href="#" @click.prevent="Tipo(player.id, 'espectador')">Espectador</a>
+                    <a class="dropdown-item" :class="{'active-type': player.tipo && player.tipo === 'player'}" href="#" @click.prevent="Tipo(player.id, 'player')">Player</a>
+                    <a class="dropdown-item" :class="{'active-type': player.tipo && player.tipo === 'espectador'}" href="#" @click.prevent="Tipo(player.id, 'espectador')">Espectador</a>
                   </div>
                 </div>
                 <span class="info">
@@ -244,9 +244,7 @@ export default {
     text-transform: uppercase;
   }
   >ul{
-
-    max-height: 600px;
-    min-height: 200px;
+    min-height: 90px;
   }
   .content-user-sidebar {
     margin-top: 15px;
@@ -299,11 +297,25 @@ export default {
   >.dropdown-menu{
     top:5px !important;
     background: var(--azul);
+    box-shadow: 0 8px 5px -5px rgba(82, 82, 82, 0.8);
     >a{
       color: #fff;
       padding: 0.25rem .75rem;
       &:hover{
         background: rgba(0, 0, 0, 0.15)
+      }
+      &.active-type{
+        &::after{
+          content: "\f00c";
+          font-family: "Font Awesome 5 Free";
+          display: inline-block;
+          font-style: normal;
+          font-variant: normal;
+          text-rendering: auto;
+          line-height: 1;
+          font-weight: 900;
+          margin-left: 5px;
+        }
       }
     }
     &::after{
