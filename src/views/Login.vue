@@ -36,9 +36,11 @@
   </div>
 </template>
 <script>
-import { setUser } from '../services/datauser'
+
+import mixinLogin from './mixinLogin'
 export default {
   name: "login",
+  mixins:[mixinLogin],
   data(){
     return{
       user:{
@@ -56,11 +58,8 @@ export default {
       try {
         let response = await this.$api().post('auth_user',this.user)
         let json = response.data
-        json.data.user
-        await setUser(json.data.user)
-        this.$router.push({path:'/'})
+        this.persisteUser(json.data.user)
       } catch (error) {
-        console.log(error)
         let err_data = error?.data?.data || null
         let text = err_data?.errors ? err_data.errors.join('<br />') :'Ocorreu uma erro ao realizar com operação'
         this.msg={
