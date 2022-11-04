@@ -10,7 +10,7 @@
       <ul class="list-group list-items-task">
         <li v-for="task in tasks" :key="task.id" class="list-group-item justify-content-between">
           <span>{{task.name}}</span>
-          <span class="btn-tasks">
+          <span v-if="permision_action" class="btn-tasks">
             <time-mr v-if="is_play !=0 && is_play==task.id" :time.sync="time"></time-mr>
             <button
               @click="ActionPlay(task, is_play ==0 ? task.id : 0)"
@@ -81,6 +81,7 @@ export default {
       descrition:null,
       id:null,
       saving:false,
+      permision_action:false,
       time:{
         millisecond:0,
         second:0,

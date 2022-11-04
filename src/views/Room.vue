@@ -81,10 +81,7 @@ export default {
     ],
     sprint:null,
     room: {
-      name: null,
-      title: {
-        rendered: null,
-      },
+      name: null
     },
     task:{},
     userVote:null
@@ -159,6 +156,8 @@ export default {
         try {
           let res = await this.$api().post(`sprints/show`, {id})
           this.room = res.data
+
+          this.task_ref.permision_action = this.user.id === res.data.owner_id
         } catch (err) {
 
         }
