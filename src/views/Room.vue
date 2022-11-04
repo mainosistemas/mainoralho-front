@@ -42,7 +42,7 @@
                   </div>
                 </div>
                 <span class="info">
-                  <small :class="`bullter status-${player.tipo ? tipo[player.tipo]:'0'}`"></small>
+                  <small :class="`bullter status-${player.tipo ? player.tipo:'0'}`"></small>
                   <span class="name">{{ player.name }}</span>
                   <time>00:00:00</time>
                   <small class="check-vote">
@@ -55,7 +55,7 @@
           </ul>
           <div v-if="trend" class="result-pont">
             <h2 class="text-center">Resultado</h2>
-            <h1 class="text-center">{{trend ? trend.label: ''}}</h1>
+            <h1 class="text-center" v-html="trend ? trend.label: ''"></h1>
           </div>
         </div>
       </div>
@@ -86,19 +86,27 @@ export default {
       name: null
     },
     task:{},
-    userVote:null,
-    tipo:{
-      'player':1,
-      'espectador':2
-    }
+    userVote:null
   }),
   components: {
     Avatar,
     TaskMr,
   },
   methods: {
-    Tipo(id, tipo){
-      console.log(id, tipo)
+    async Tipo(id, tipo){
+      try {
+          await this.$api().put(`users/${id}`, {tipo})
+          let users = [...this.users]
+          let index = users.findIndex(u=>u.id == id)
+          if(index> -1){
+            users[index].tipo = tipo
+          }
+          this.$nextTick(()=>{
+            this.users = users
+          })
+        } catch (err) {
+
+        }
     },
 
     handleVotes(userVotes){
@@ -262,10 +270,10 @@ export default {
         border-radius: 50%;
         display: block;
         box-shadow: 0 1.5px 2px rgba(0, 0, 0, 0.6);
-        &.status-1 {
+        &.status-player {
           background: var(--teal);
         }
-        &.status-2 {
+        &.status-moderador,  &.status-espectador {
           background: var(--red);
         }
       }
