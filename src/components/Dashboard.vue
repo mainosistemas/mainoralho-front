@@ -3,7 +3,7 @@
     <div class="container">
       <section class="info d-flex justify-content-between mt-5">
         <span>
-          <h3>Últimas projetos</h3>
+          <h3>Últimos projetos</h3>
         </span>
         <span>
           <button class="btn btn-primary" @click="open_modal = true">
